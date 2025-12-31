@@ -18,10 +18,8 @@ app.use(cors({
 
 app.use(express.json());
 
-// Serve uploaded images statically
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Routers
 const authRoutes = require('./routes/authRoutes');
 const productRoutes = require('./routes/productRoutes');
 const kitRoutes = require('./routes/kitRoutes');

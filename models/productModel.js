@@ -1,6 +1,6 @@
 const supabase = require('../config/supabase');
 
-const BUCKET = 'product-images'; // same bucket
+const BUCKET = 'product-images'; 
 
 const getAllProducts = async () => {
   const { data, error } = await supabase.from('products').select('*');
