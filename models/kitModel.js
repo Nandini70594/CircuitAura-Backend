@@ -1,6 +1,16 @@
 const supabase = require('../config/supabase');
-
 const BUCKET = 'product-images'; 
+
+// ✅ HELPER: Extract filename from full URL or use as-is
+const getFilename = (imagePath) => {
+  if (!imagePath) return null;
+  // If full URL, extract filename from end
+  if (imagePath.includes('supabase.co') || imagePath.includes('/storage/')) {
+    return imagePath.split('/').pop() || imagePath;
+  }
+  // Already filename
+  return imagePath;
+};
 
 const getAllKits = async () => {
   const { data, error } = await supabase.from('kits').select('*');
@@ -9,18 +19,21 @@ const getAllKits = async () => {
   return data.map(kit => {
     const updatedKit = { ...kit };
 
+    // ✅ HANDLE FULL URL OR FILENAME
     if (kit.image_url) {
+      const filename = getFilename(kit.image_url);
       updatedKit.image_url = supabase
         .storage
         .from(BUCKET)
-        .getPublicUrl(kit.image_url).publicUrl;
+        .getPublicUrl(filename).publicUrl;
     }
 
     if (kit.pdf_url) {
+      const pdfFilename = getFilename(kit.pdf_url);
       updatedKit.pdf_url = supabase
         .storage
         .from(BUCKET)
-        .getPublicUrl(kit.pdf_url).publicUrl;
+        .getPublicUrl(pdfFilename).publicUrl;
     }
 
     return updatedKit;
@@ -35,18 +48,21 @@ const getKitById = async (id) => {
     .single();
   if (error) throw error;
 
+  // ✅ HANDLE FULL URL OR FILENAME
   if (data.image_url) {
+    const filename = getFilename(data.image_url);
     data.image_url = supabase
       .storage
       .from(BUCKET)
-      .getPublicUrl(data.image_url).publicUrl;
+      .getPublicUrl(filename).publicUrl;
   }
 
   if (data.pdf_url) {
+    const pdfFilename = getFilename(data.pdf_url);
     data.pdf_url = supabase
       .storage
       .from(BUCKET)
-      .getPublicUrl(data.pdf_url).publicUrl;
+      .getPublicUrl(pdfFilename).publicUrl;
   }
 
   return data;
