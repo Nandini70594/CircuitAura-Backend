@@ -5,11 +5,9 @@ const { authenticateToken, authorizeRole } = require('../middleware/authMiddlewa
 
 const router = express.Router();
 
-// Multer setup to keep file in memory (buffer) instead of disk
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-// Supabase client
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
