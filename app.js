@@ -8,12 +8,13 @@ const app = express();
 // ========== CORS SETUP ==========
 app.use(cors({
   origin: [
-    'http://localhost:8080',          // Local development
-    'https://your-frontend.netlify.app' // Replace with your deployed frontend URL
+    'http://localhost:8080',
+    'https://circuitaura-frontend.netlify.app'
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true
 }));
+
 
 app.use(express.json());
 
