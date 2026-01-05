@@ -5,15 +5,16 @@ const cors = require('cors');
 
 const app = express();
 
-// ========== CORS SETUP ==========
 app.use(cors({
   origin: [
-    'http://localhost:8080',
+    'http://localhost:8080',        
+    'http://127.0.0.1:8080',        
     'https://circuitaura.netlify.app'
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true
 }));
+
 
 
 app.use(express.json());
