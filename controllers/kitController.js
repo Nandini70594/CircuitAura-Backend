@@ -28,7 +28,15 @@ const fetchKitById = async (req, res) => {
 
 const addKit = async (req, res) => {
   try {
-    const kitData = req.body;
+    const kitData = { ...req.body };
+
+    if (kitData.image_url) {
+      kitData.image_url = kitData.image_url.split('/').pop();
+    }
+    if (kitData.pdf_url) {
+      kitData.pdf_url = kitData.pdf_url.split('/').pop();
+    }
+
     const newKit = await createKit(kitData);
     res.status(201).json(newKit);
   } catch (err) {
@@ -40,7 +48,15 @@ const addKit = async (req, res) => {
 const updateKitById = async (req, res) => {
   try {
     const id = req.params.id;
-    const kitData = req.body;
+    const kitData = { ...req.body };
+
+    if (kitData.image_url) {
+      kitData.image_url = kitData.image_url.split('/').pop();
+    }
+    if (kitData.pdf_url) {
+      kitData.pdf_url = kitData.pdf_url.split('/').pop();
+    }
+
     const updatedKit = await updateKit(id, kitData);
     res.json(updatedKit);
   } catch (err) {
