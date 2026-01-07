@@ -31,6 +31,7 @@ app.get("/", (req, res) => {
   res.send("CircuitAura Backend Running 🚀");
 });
 
+app.use("/auth", authRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/kits", kitRoutes);
