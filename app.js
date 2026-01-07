@@ -37,6 +37,7 @@ app.use("/api/products", productRoutes);
 app.use("/api/kits", kitRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/resources", resourceRoutes);
+app.use("/resources", resourceRoutes);
 
 app.use("/kits", (req, res, next) => {
   res.redirect(307, `/api/kits${req.url}`);
