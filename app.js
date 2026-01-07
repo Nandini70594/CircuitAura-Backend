@@ -48,6 +48,7 @@ const authRoutes = require("./routes/authRoutes");
 const productRoutes = require("./routes/productRoutes");
 const kitRoutes = require("./routes/kitRoutes");
 const orderRoutes = require("./routes/orderRoutes");
+const resourceRoutes = require("./routes/resourceRoutes"); 
 
 const app = express();
 
