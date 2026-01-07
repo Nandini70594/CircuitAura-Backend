@@ -18,6 +18,7 @@ router.post('/', authenticateToken, authorizeRole('admin'), upload.single('file'
     if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
 
     const fileName = `${Date.now()}_${req.file.originalname}`;
+    
     const { data, error } = await supabase.storage
       .from('product-images')
       .upload(fileName, req.file.buffer, {
@@ -31,9 +32,14 @@ router.post('/', authenticateToken, authorizeRole('admin'), upload.single('file'
       return res.status(500).json({ message: 'Upload to Supabase failed', error });
     }
 
-    const { publicUrl } = supabase.storage.from('product-images').getPublicUrl(data.path);
+    const { data: urlData } = supabase.storage
+      .from('product-images')
+      .getPublicUrl(data.path);
 
-    res.json({ url: publicUrl });
+    res.json({ 
+      filename: data.path,     
+      publicUrl: urlData.publicUrl  
+    });
   } catch (error) {
     console.error('Upload error:', error);
     res.status(500).json({ message: 'Internal server error during upload' });

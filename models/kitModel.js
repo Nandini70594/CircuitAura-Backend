@@ -1,15 +1,21 @@
 const supabase = require('../config/supabase');
-const BUCKET = 'product-images'; 
+const BUCKET = 'product-images';
 
-// ✅ HELPER: Extract filename from full URL or use as-is
 const getFilename = (imagePath) => {
   if (!imagePath) return null;
-  // If full URL, extract filename from end
-  if (imagePath.includes('supabase.co') || imagePath.includes('/storage/')) {
-    return imagePath.split('/').pop() || imagePath;
+  
+  let path = imagePath;
+  
+  if (path.includes('supabase.co/storage/v1/object/public/')) {
+    const match = path.match(/\/object\/public\/product-images\/(.+)$/);
+    if (match) return decodeURIComponent(match[1]);
   }
-  // Already filename
-  return imagePath;
+  
+  if (path.startsWith('product-images/')) {
+    return decodeURIComponent(path.replace('product-images/', ''));
+  }
+  
+  return decodeURIComponent(path);
 };
 
 const getAllKits = async () => {
@@ -18,22 +24,19 @@ const getAllKits = async () => {
 
   return data.map(kit => {
     const updatedKit = { ...kit };
-
-    // ✅ HANDLE FULL URL OR FILENAME
+    
     if (kit.image_url) {
       const filename = getFilename(kit.image_url);
-      updatedKit.image_url = supabase
-        .storage
+      updatedKit.image_url = supabase.storage
         .from(BUCKET)
-        .getPublicUrl(filename).publicUrl;
+        .getPublicUrl(filename).data.publicUrl;
     }
 
     if (kit.pdf_url) {
       const pdfFilename = getFilename(kit.pdf_url);
-      updatedKit.pdf_url = supabase
-        .storage
+      updatedKit.pdf_url = supabase.storage
         .from(BUCKET)
-        .getPublicUrl(pdfFilename).publicUrl;
+        .getPublicUrl(pdfFilename).data.publicUrl;
     }
 
     return updatedKit;
@@ -48,21 +51,18 @@ const getKitById = async (id) => {
     .single();
   if (error) throw error;
 
-  // ✅ HANDLE FULL URL OR FILENAME
   if (data.image_url) {
     const filename = getFilename(data.image_url);
-    data.image_url = supabase
-      .storage
+    data.image_url = supabase.storage
       .from(BUCKET)
-      .getPublicUrl(filename).publicUrl;
+      .getPublicUrl(filename).data.publicUrl;
   }
 
   if (data.pdf_url) {
     const pdfFilename = getFilename(data.pdf_url);
-    data.pdf_url = supabase
-      .storage
+    data.pdf_url = supabase.storage
       .from(BUCKET)
-      .getPublicUrl(pdfFilename).publicUrl;
+      .getPublicUrl(pdfFilename).data.publicUrl;
   }
 
   return data;
