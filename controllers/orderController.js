@@ -83,12 +83,19 @@ const getMyOrders = async (req, res) => {
 const getAllOrdersWithItems = async (req, res) => {
   try {
     const orders = await getAllOrders();
-    res.json(orders);
+
+    const formattedOrders = orders.map(order => ({
+      ...order,
+      items: order.order_items || []  
+    }));
+
+    res.json(formattedOrders);
   } catch (err) {
     console.error('getAllOrders error:', err);
     res.status(500).json({ message: 'DB error' });
   }
 };
+
 
 const updateStatus = async (req, res) => {
   try {
