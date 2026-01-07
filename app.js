@@ -78,6 +78,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/kits", kitRoutes);
 app.use("/api/orders", orderRoutes);
+app.use("/api/resources", resourceRoutes);
 
 app.use((err, req, res, next) => {
   console.error("Backend Error:", err);
