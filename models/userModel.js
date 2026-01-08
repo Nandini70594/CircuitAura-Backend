@@ -1,13 +1,12 @@
 const supabase = require('../config/supabase');
 
 const findUserByEmail = async (email) => {
-  const { data, error } = await supabase
+  const { data } = await supabase
     .from('users')
     .select('*')
-    .eq('email', email)
-    .single();
-  if (error) throw error;
-  return data;
+    .eq('email', email);
+  
+  return data?.[0] || null; // ✅ null if not found
 };
 
 const createUser = async (userData) => {
