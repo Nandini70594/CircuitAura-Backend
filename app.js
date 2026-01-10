@@ -19,7 +19,7 @@ const corsOptions = {
   origin: [
     "http://localhost:8080",
     "http://localhost:5173",
-    "https://circuitaura.netlify.app"
+    "https://circuitaura.netlify.app",
     "https://circuitaura.in"
   ],
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
