@@ -9,6 +9,7 @@ const productRoutes = require("./routes/productRoutes");
 const kitRoutes = require("./routes/kitRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const resourceRoutes = require("./routes/resourceRoutes"); 
+const uploadRouter = require("./routes/uploadRouter");  // ← Line 10
 
 const app = express();
 
@@ -78,6 +79,7 @@ app.use("/api/kits", kitRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/resources", resourceRoutes);
 app.use("/resources", resourceRoutes);
+app.use("/api/upload", uploadRouter);     // ← THIS FIXES 404!
 
 app.use("/kits", (req, res, next) => {
   res.redirect(307, `/api/kits${req.url}`);
