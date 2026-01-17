@@ -55,7 +55,6 @@ const { createClient } = require('@supabase/supabase-js');
 const { authenticateToken, authorizeRole } = require('../middleware/authMiddleware');
 
 const router = express.Router();
-
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
@@ -63,20 +62,23 @@ router.post('/', authenticateToken, authorizeRole('admin'), upload.single('file'
   try {
     if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
 
-    // 🔥 FIX: Create PURE service_role client INSIDE handler (no JWT contamination)
-    const supabase = createClient(
-      process.env.SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_ROLE_KEY,
-      { 
-        auth: { 
-          autoRefreshToken: false, 
-          persistSession: false 
-        } 
+    // 🔥 SERVICE ROLE WITH EXPLICIT BYPASS - NO JWT CONTAMINATION
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    
+    const supabase = createClient(supabaseUrl, serviceRoleKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      },
+      global: {
+        headers: {} // NO JWT headers
       }
-    );
+    });
 
     const fileName = `${Date.now()}_${req.file.originalname}`;
     
+    // 🔥 EXPLICIT SERVICE ROLE UPLOAD
     const { data, error } = await supabase.storage
       .from('product-images')
       .upload(fileName, req.file.buffer, {
@@ -86,23 +88,24 @@ router.post('/', authenticateToken, authorizeRole('admin'), upload.single('file'
       });
 
     if (error) {
-      console.error('Supabase upload error:', error);
-      return res.status(500).json({ message: 'Upload to Supabase failed', error: error.message });
+      console.error('🚨 SUPABASE ERROR:', error);
+      return res.status(500).json({ message: 'Upload failed', error: error.message });
     }
 
     const { data: urlData } = supabase.storage
       .from('product-images')
       .getPublicUrl(data.path);
 
-    console.log('✅ Upload successful:', data.path); // Debug log
-
+    console.log('✅ UPLOAD SUCCESS:', data.path);
+    
     res.json({ 
-      filename: data.path,     
-      publicUrl: urlData.publicUrl  
+      filename: data.path,
+      publicUrl: urlData.publicUrl 
     });
+    
   } catch (error) {
-    console.error('Upload error:', error);
-    res.status(500).json({ message: 'Internal server error during upload' });
+    console.error('💥 FINAL ERROR:', error);
+    res.status(500).json({ message: 'Server error' });
   }
 });
 
