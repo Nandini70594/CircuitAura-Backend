@@ -5,6 +5,11 @@ const { findUserByEmail, createUser } = require('../models/userModel');
 const signup = async (req, res) => {
   try {
     const { name, email, password, role, adminKey } = req.body;
+    console.log('🔑 Received adminKey:', adminKey);
+console.log('🔑 Railway ADMIN_SECRET:', process.env.ADMIN_SECRET);
+console.log('🔑 Railway RESET_KEY:', process.env.RESET_KEY); 
+console.log('🔑 All secrets:', Object.keys(process.env).filter(k => k.toLowerCase().includes('secret')));
+
     
     const existingUser = await findUserByEmail(email);
     if (existingUser) {
