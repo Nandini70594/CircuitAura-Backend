@@ -92,7 +92,7 @@ The API returns standard HTTP status codes for validation, authentication, autho
 
 ## Available Scripts
 
-```json
+```
 
 - `npm start` — Starts the production server.
 - `npm run dev` — Starts the development server using Nodemon.
